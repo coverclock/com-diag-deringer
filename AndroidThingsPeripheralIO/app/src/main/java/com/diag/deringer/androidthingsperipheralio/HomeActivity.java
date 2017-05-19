@@ -2,6 +2,7 @@ package com.diag.deringer.androidthingsperipheralio;
 
 // https://codelabs.developers.google.com/codelabs/androidthings-peripherals/#0
 // mailto:coverclock@diag.com
+// https://github.com/coverclock/com-diag-deringer
 
 import java.io.IOException;
 import android.app.Activity;
