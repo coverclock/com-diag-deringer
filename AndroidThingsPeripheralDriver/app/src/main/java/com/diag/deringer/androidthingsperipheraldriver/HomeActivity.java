@@ -6,9 +6,11 @@ package com.diag.deringer.androidthingsperipheraldriver;
 import java.io.IOException;
 import android.app.Activity;
 import android.os.Bundle;
+import com.google.android.things.contrib.driver.button.Button;
+import com.google.android.things.contrib.driver.button.ButtonInputDriver;
 import com.google.android.things.pio.PeripheralManagerService;
 import com.google.android.things.pio.Gpio;
-import com.google.android.things.pio.GpioCallback;
+import android.view.KeyEvent;
 import android.util.Log;
 
 /**
@@ -37,26 +39,10 @@ public class HomeActivity extends Activity {
     private static final String BUTTON_C = "BCM16";
     private static final String LED_RED = "BCM6";
 
-    // GPIO connection to button input.
-    private Gpio mButtonGpio;
+    // Driver for the GPIO button.
+    private ButtonInputDriver mButtonInputDriver;
     // GPIO connection to LED output.
     private Gpio mLedGpio;
-
-    private GpioCallback mCallback = new GpioCallback() {
-        @Override
-        public boolean onGpioEdge(Gpio gpio) {
-            try {
-                boolean buttonValue = gpio.getValue();
-                Log.i(TAG, "GPIO changed, button " + buttonValue);
-                mLedGpio.setValue(buttonValue);
-            } catch (IOException e) {
-                Log.w(TAG, "Error reading GPIO");
-            }
-
-            // Return true to keep callback active.
-            return true;
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,22 +53,24 @@ public class HomeActivity extends Activity {
 
         try {
             // Create GPIO connections.
-            mButtonGpio = service.openGpio(BUTTON_A);
             mLedGpio = service.openGpio(LED_RED);
-
-            // Configure as an input, trigger events on every change.
-            mButtonGpio.setDirection(Gpio.DIRECTION_IN);
-            mButtonGpio.setEdgeTriggerType(Gpio.EDGE_BOTH);
-            // Value is true with the pin is LOW.
-            mButtonGpio.setActiveType(Gpio.ACTIVE_LOW);
 
             // Configure as an output.
             mLedGpio.setDirection(Gpio.DIRECTION_OUT_INITIALLY_LOW);
-
-            // Register the event callback.
-            mButtonGpio.registerGpioCallback(mCallback);
         } catch (IOException e) {
             Log.w(TAG, "Error opening GPIO", e);
+        }
+
+        try {
+            // Initialize button driver to emit SPACE key events.
+            mButtonInputDriver = new ButtonInputDriver(
+                    BUTTON_A,
+                    Button.LogicState.PRESSED_WHEN_LOW,
+                    KeyEvent.KEYCODE_SPACE);
+            // Register with the framework.
+            mButtonInputDriver.register();
+        } catch (IOException e) {
+            Log.e(TAG, "Error opening button.driver", e);
         }
     }
 
@@ -90,13 +78,13 @@ public class HomeActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
 
-        // Close the button.
-        if (mButtonGpio != null) {
-            mButtonGpio.unregisterGpioCallback(mCallback);
+        // Unregister the driver and close.
+        if (mButtonInputDriver != null) {
+            mButtonInputDriver.unregister();
             try {
-                mButtonGpio.close();
+                mButtonInputDriver.close();
             } catch (IOException e) {
-                Log.w(TAG,"Error closing GPIO", e);
+                Log.e(TAG, "Error closing Button driver", e);
             }
         }
 
@@ -108,5 +96,38 @@ public class HomeActivity extends Activity {
                 Log.e(TAG,"Error closing GPIO", e);
             }
         }
+    }
+
+    /**
+     * Update the value of the LED output.
+     */
+    private void setLedValue(boolean value) {
+        try {
+            mLedGpio.setValue(value);
+        } catch (IOException e) {
+            Log.e(TAG, "Error updating GPIO value", e);
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_SPACE) {
+            // Turn on the LED.
+            setLedValue(true);
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_SPACE) {
+            // Turn off the LED.
+            setLedValue(false);
+            return true;
+        }
+
+        return super.onKeyUp(keyCode, event);
     }
 }
