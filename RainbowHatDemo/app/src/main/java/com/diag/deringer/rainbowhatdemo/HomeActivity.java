@@ -13,6 +13,7 @@ import com.google.android.things.contrib.driver.pwmspeaker.Speaker;
 import com.google.android.things.contrib.driver.apa102.Apa102;
 import com.google.android.things.pio.Gpio;
 import java.io.IOException;
+import java.lang.InterruptedException;
 import android.util.Log;
 import android.graphics.Color;
 
@@ -44,28 +45,25 @@ public class HomeActivity extends Activity {
 
         try {
 
+            /*
             Gpio red = RainbowHat.openLedRed();
             red.setValue(true);
             red.close();
+            */
 
             Gpio green = RainbowHat.openLedGreen();
             green.setValue(true);
-            green.close();
 
             Gpio blue = RainbowHat.openLedBlue();
             blue.setValue(true);
-            blue.close();
 
             AlphanumericDisplay segment = RainbowHat.openDisplay();
             segment.setBrightness(Ht16k33.HT16K33_BRIGHTNESS_MAX);
             segment.display("CHIP");
             segment.setEnabled(true);
-            segment.close();
 
             Speaker buzzer = RainbowHat.openPiezo();
             buzzer.play(440);
-            buzzer.stop();
-            buzzer.close();
 
             Apa102 strip = RainbowHat.openLedStrip();
             strip.setBrightness(31);
@@ -74,7 +72,28 @@ public class HomeActivity extends Activity {
                 rainbow[i] = Color.HSVToColor(255, new float[] { i * 360.f / rainbow.length, 1.0f, 1.0f });
             }
             strip.write(rainbow);
+
+            try { Thread.sleep(5000); } catch (InterruptedException e) { /* Do nothing. */ }
+
+            strip.setBrightness(0);
             strip.close();
+
+            buzzer.stop();
+            buzzer.close();
+
+            segment.setEnabled(false);
+            segment.close();
+
+            blue.setValue(false);
+            blue.close();
+
+            green.setValue(false);
+            green.close();
+
+            /*
+            red.setValue(false);
+            red.close();
+            */
 
         } catch (IOException e) {
             Log.e(NAME, "Failed! " + e);
