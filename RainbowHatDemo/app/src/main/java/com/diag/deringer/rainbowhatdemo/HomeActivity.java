@@ -11,6 +11,7 @@ import com.google.android.things.contrib.driver.ht16k33.Ht16k33;
 import com.google.android.things.contrib.driver.ht16k33.AlphanumericDisplay;
 import com.google.android.things.contrib.driver.pwmspeaker.Speaker;
 import com.google.android.things.contrib.driver.apa102.Apa102;
+import com.google.android.things.contrib.driver.bmx280.Bmx280;
 import com.google.android.things.pio.Gpio;
 import java.io.IOException;
 import java.lang.InterruptedException;
@@ -37,7 +38,7 @@ import android.graphics.Color;
  * @see <a href="https://github.com/androidthings/contrib-drivers#readme">https://github.com/androidthings/contrib-drivers#readme</a>
  */
 public class HomeActivity extends Activity {
-    private static final String NAME = "HomeActivity";
+    private static final String TAG = "HomeActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +46,8 @@ public class HomeActivity extends Activity {
 
         try {
 
-            /*
             Gpio red = RainbowHat.openLedRed();
             red.setValue(true);
-            red.close();
-            */
 
             Gpio green = RainbowHat.openLedGreen();
             green.setValue(true);
@@ -57,32 +55,45 @@ public class HomeActivity extends Activity {
             Gpio blue = RainbowHat.openLedBlue();
             blue.setValue(true);
 
+            Bmx280 sensor = RainbowHat.openSensor();
+            sensor.setTemperatureOversampling(Bmx280.OVERSAMPLING_1X);
+            float centigrade = sensor.readTemperature();
+            float fahrenheit = (centigrade * 9.0f / 5.0f) + 32.0f;
+
             AlphanumericDisplay segment = RainbowHat.openDisplay();
             segment.setBrightness(Ht16k33.HT16K33_BRIGHTNESS_MAX);
-            segment.display("CHIP");
+            segment.display(fahrenheit);
             segment.setEnabled(true);
+
+            Apa102 strip = RainbowHat.openLedStrip();
+            int[] rainbow = new int[RainbowHat.LEDSTRIP_LENGTH];
+            strip.setBrightness(Apa102.MAX_BRIGHTNESS);
+            for (int i = 0; i < rainbow.length; i++) {
+                rainbow[i] = Color.HSVToColor(0xff, new float[] { i * 360.0f / rainbow.length, 1.0f, 1.0f });
+            }
+            strip.write(rainbow);
+            strip.close();
 
             Speaker buzzer = RainbowHat.openPiezo();
             buzzer.play(440);
 
-            Apa102 strip = RainbowHat.openLedStrip();
-            strip.setBrightness(31);
-            int[] rainbow = new int[RainbowHat.LEDSTRIP_LENGTH];
-            for (int i = 0; i < rainbow.length; i++) {
-                rainbow[i] = Color.HSVToColor(255, new float[] { i * 360.f / rainbow.length, 1.0f, 1.0f });
-            }
-            strip.write(rainbow);
-
             try { Thread.sleep(5000); } catch (InterruptedException e) { /* Do nothing. */ }
-
-            strip.setBrightness(0);
-            strip.close();
 
             buzzer.stop();
             buzzer.close();
 
+            strip = RainbowHat.openLedStrip();
+            strip.setBrightness(0);
+            for (int i = 0; i < rainbow.length; i++) {
+                rainbow[i] = Color.HSVToColor(0xff, new float[] { 0.0f, 1.0f, 1.0f });
+            }
+            strip.write(rainbow);
+            strip.close();
+
             segment.setEnabled(false);
             segment.close();
+
+            sensor.close();
 
             blue.setValue(false);
             blue.close();
@@ -90,13 +101,11 @@ public class HomeActivity extends Activity {
             green.setValue(false);
             green.close();
 
-            /*
             red.setValue(false);
             red.close();
-            */
 
         } catch (IOException e) {
-            Log.e(NAME, "Failed! " + e);
+            Log.e(TAG, "Failed! " + e);
         }
     }
 }
