@@ -1,0 +1,27 @@
+kernel=u-boot-dtok.bin
+framebuffer_depth=16
+dtparam=i2c_arm=on
+dtparam=spi=on
+dtparam=audio=on
+
+# pwm and I2S are mutually-exclusive since they share hardware clocks.  To
+# enable I2S comment out the pwm line and uncomment the generic-i2s line.
+dtoverlay=pwm-2chan-with-clk,pin=18,func=2,pin2=13,func2=4
+# dtoverlay=generic-i2s
+
+start_x=1
+
+# Tell U-boot to always use the "serial0" interface for the console, which is
+# set to whichever uart (uart0 or uart1) is set to the header pins. This doesn't
+# interfere with the uart selected for Bluetooth.
+dtoverlay=chosen-serial0
+
+# Enable skip-init on the UART interfaces, so U-Boot doesn't attempt to
+# re-initialize them.
+dtoverlay=rpi-uart-skip-init
+
+# Uncomment to disable serial port on headers, use GPIO14 and GPIO15
+# as gpios and to allow the core_freq to change at runtime.
+#enable_uart=1
+#core_freq=400
+dtoverlay=pi3-disable-bt

@@ -25,3 +25,9 @@ RESOURCES
 
 <https://codelabs.developers.google.com/codelabs/androidthings-peripherals/#0>
 
+NOTES
+
+    adb uninstall com.diag.deringer.androidthingsperipheralio
+    adb uninstall com.diag.deringer.androidthingsperipheraldriver
+    adb uninstall com.diag.deringer.rainbowhatdemo
+
