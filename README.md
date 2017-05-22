@@ -35,6 +35,8 @@ RESOURCES
 
 <http://hackaday.com/2014/12/09/digging-into-the-apa102-serial-led-protocol/>
 
+<https://blog.stylingandroid.com/simple-things-part-4/>
+
 NOTES
 
     adb uninstall com.diag.deringer.androidthingsperipheralio

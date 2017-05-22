@@ -72,7 +72,10 @@ public class HomeActivity extends Activity {
                 rainbow[i] = Color.HSVToColor(0xff, new float[] { i * 360.0f / rainbow.length, 1.0f, 1.0f });
             }
             strip.write(rainbow);
-            strip.close();
+            for (int i = 0; i < rainbow.length; i++) {
+                rainbow[i] = ~0;
+            }
+            strip.write(rainbow);
 
             Speaker buzzer = RainbowHat.openPiezo();
             buzzer.play(440);
@@ -82,10 +85,13 @@ public class HomeActivity extends Activity {
             buzzer.stop();
             buzzer.close();
 
-            strip = RainbowHat.openLedStrip();
             strip.setBrightness(0);
             for (int i = 0; i < rainbow.length; i++) {
                 rainbow[i] = Color.HSVToColor(0xff, new float[] { 0.0f, 1.0f, 1.0f });
+            }
+            strip.write(rainbow);
+            for (int i = 0; i < rainbow.length; i++) {
+                rainbow[i] = ~0;
             }
             strip.write(rainbow);
             strip.close();
