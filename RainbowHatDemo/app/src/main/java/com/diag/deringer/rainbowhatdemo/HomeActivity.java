@@ -46,7 +46,7 @@ public class HomeActivity extends Activity {
 
         try {
 
-            // Create.
+            // Open.
 
             Gpio red = RainbowHat.openLedRed();
 
