@@ -46,8 +46,12 @@ public class HomeActivity extends Activity {
 
         try {
 
+            // Create.
+
             Gpio red = RainbowHat.openLedRed();
+
             Gpio green = RainbowHat.openLedGreen();
+
             Gpio blue = RainbowHat.openLedBlue();
 
             Bmx280 sensor = RainbowHat.openSensor();
@@ -58,14 +62,22 @@ public class HomeActivity extends Activity {
 
             Speaker buzzer = RainbowHat.openPiezo();
 
-            //////////
-
-            red.setValue(true);
-            green.setValue(true);
-            blue.setValue(true);
+            // Initialize.
 
             sensor.setTemperatureOversampling(Bmx280.OVERSAMPLING_1X);
             sensor.setPressureOversampling(Bmx280.OVERSAMPLING_1X);
+
+            segment.setBrightness(Ht16k33.HT16K33_BRIGHTNESS_MAX);
+            segment.setEnabled(true);
+
+            // Apply.
+
+            red.setValue(true);
+
+            green.setValue(true);
+
+            blue.setValue(true);
+
             float[] readings = sensor.readTemperatureAndPressure();
             float centigrade = readings[0];
             float fahrenheit = (centigrade * 9.0f / 5.0f) + 32.0f;
@@ -74,9 +86,7 @@ public class HomeActivity extends Activity {
 
             Log.i(TAG, centigrade + "C " + fahrenheit + "F " + hectopascals + "hPa " + inches + "in");
 
-            segment.setBrightness(Ht16k33.HT16K33_BRIGHTNESS_MAX);
             segment.display(fahrenheit);
-            segment.setEnabled(true);
 
             int[] rainbow = new int[RainbowHat.LEDSTRIP_LENGTH];
             strip.setBrightness(Apa102.MAX_BRIGHTNESS);
@@ -94,11 +104,14 @@ public class HomeActivity extends Activity {
                 buzzer.play(frequency);
                 try {
                     Thread.sleep(100);
-                } catch (InterruptedException e) { /* Do nothing. */ }
-                buzzer.stop();
+                } catch (InterruptedException e) {
+                    /* Do nothing. */
+                }
             }
 
-            //////////
+            // Shutdown.
+
+            buzzer.stop();
 
             strip.setBrightness(0);
             for (int i = 0; i < rainbow.length; i++) {
@@ -113,10 +126,12 @@ public class HomeActivity extends Activity {
             segment.setEnabled(false);
 
             blue.setValue(false);
+
             green.setValue(false);
+
             red.setValue(false);
 
-            //////////
+            // Close.
 
             buzzer.close();
 
@@ -127,7 +142,9 @@ public class HomeActivity extends Activity {
             sensor.close();
 
             blue.close();
+
             green.close();
+
             red.close();
 
         } catch (IOException e) {
