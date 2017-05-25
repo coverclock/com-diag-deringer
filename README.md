@@ -21,6 +21,16 @@ ABSTRACT
 
 These are musings with Android Things on the Raspberry Pi 3.
 
+REPOSITORIES
+
+<https://github.com/coverclock/com-diag-deringer>
+
+<https://github.com/amitshekhariitbhu/awesome-android-things>
+
+<https://github.com/androidthings/contrib-drivers>
+
+<https://github.com/androidthings/sample-simpleui>
+
 RESOURCES
 
 <https://codelabs.developers.google.com/codelabs/androidthings-peripherals/#0>
@@ -42,4 +52,5 @@ NOTES
     adb uninstall com.diag.deringer.androidthingsperipheralio
     adb uninstall com.diag.deringer.androidthingsperipheraldriver
     adb uninstall com.diag.deringer.rainbowhatdemo
+    adb uninstall com.example.androidthings.simpleui
 

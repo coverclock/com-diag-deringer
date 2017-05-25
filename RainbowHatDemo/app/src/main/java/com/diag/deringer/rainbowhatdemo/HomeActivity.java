@@ -80,6 +80,8 @@ public class HomeActivity extends Activity {
             Speaker buzzer = RainbowHat.openPiezo();
             buzzer.play(440);
 
+            Log.i(TAG, centigrade + "C " + fahrenheit + "F");
+
             try { Thread.sleep(5000); } catch (InterruptedException e) { /* Do nothing. */ }
 
             buzzer.stop();
