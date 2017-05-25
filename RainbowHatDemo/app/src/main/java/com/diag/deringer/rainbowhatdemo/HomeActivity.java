@@ -47,29 +47,41 @@ public class HomeActivity extends Activity {
         try {
 
             Gpio red = RainbowHat.openLedRed();
-            red.setValue(true);
-
             Gpio green = RainbowHat.openLedGreen();
-            green.setValue(true);
-
             Gpio blue = RainbowHat.openLedBlue();
-            blue.setValue(true);
 
             Bmx280 sensor = RainbowHat.openSensor();
-            sensor.setTemperatureOversampling(Bmx280.OVERSAMPLING_1X);
-            float centigrade = sensor.readTemperature();
-            float fahrenheit = (centigrade * 9.0f / 5.0f) + 32.0f;
 
             AlphanumericDisplay segment = RainbowHat.openDisplay();
+
+            Apa102 strip = RainbowHat.openLedStrip();
+
+            Speaker buzzer = RainbowHat.openPiezo();
+
+            //////////
+
+            red.setValue(true);
+            green.setValue(true);
+            blue.setValue(true);
+
+            sensor.setTemperatureOversampling(Bmx280.OVERSAMPLING_1X);
+            sensor.setPressureOversampling(Bmx280.OVERSAMPLING_1X);
+            float[] readings = sensor.readTemperatureAndPressure();
+            float centigrade = readings[0];
+            float fahrenheit = (centigrade * 9.0f / 5.0f) + 32.0f;
+            float hectopascals = readings[1];
+            float inches = hectopascals * 0.02953f;
+
+            Log.i(TAG, centigrade + "C " + fahrenheit + "F " + hectopascals + "hPa " + inches + "in");
+
             segment.setBrightness(Ht16k33.HT16K33_BRIGHTNESS_MAX);
             segment.display(fahrenheit);
             segment.setEnabled(true);
 
-            Apa102 strip = RainbowHat.openLedStrip();
             int[] rainbow = new int[RainbowHat.LEDSTRIP_LENGTH];
             strip.setBrightness(Apa102.MAX_BRIGHTNESS);
-            for (int i = 0; i < rainbow.length; i++) {
-                rainbow[i] = Color.HSVToColor(0xff, new float[] { i * 360.0f / rainbow.length, 1.0f, 1.0f });
+            for (int ii = 0; ii < rainbow.length; ii++) {
+                rainbow[ii] = Color.HSVToColor(0xff, new float[] { ii * 360.0f / rainbow.length, 1.0f, 1.0f });
             }
             strip.write(rainbow);
             for (int i = 0; i < rainbow.length; i++) {
@@ -77,15 +89,16 @@ public class HomeActivity extends Activity {
             }
             strip.write(rainbow);
 
-            Speaker buzzer = RainbowHat.openPiezo();
-            buzzer.play(440);
+            for (float frequency = 20.0f; frequency <= 20000.0f; frequency *= 1.1f) {
+                Log.i(TAG, frequency + "Hz");
+                buzzer.play(frequency);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) { /* Do nothing. */ }
+                buzzer.stop();
+            }
 
-            Log.i(TAG, centigrade + "C " + fahrenheit + "F");
-
-            try { Thread.sleep(5000); } catch (InterruptedException e) { /* Do nothing. */ }
-
-            buzzer.stop();
-            buzzer.close();
+            //////////
 
             strip.setBrightness(0);
             for (int i = 0; i < rainbow.length; i++) {
@@ -96,20 +109,25 @@ public class HomeActivity extends Activity {
                 rainbow[i] = ~0;
             }
             strip.write(rainbow);
-            strip.close();
 
             segment.setEnabled(false);
+
+            blue.setValue(false);
+            green.setValue(false);
+            red.setValue(false);
+
+            //////////
+
+            buzzer.close();
+
+            strip.close();
+
             segment.close();
 
             sensor.close();
 
-            blue.setValue(false);
             blue.close();
-
-            green.setValue(false);
             green.close();
-
-            red.setValue(false);
             red.close();
 
         } catch (IOException e) {
