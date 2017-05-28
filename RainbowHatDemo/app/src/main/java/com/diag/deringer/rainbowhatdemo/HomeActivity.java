@@ -38,9 +38,97 @@ import android.graphics.Color;
  * @see <a href="https://github.com/androidthings/contrib-drivers#readme">https://github.com/androidthings/contrib-drivers#readme</a>
  */
 public class HomeActivity extends Activity {
+
     private static final String TAG = "HomeActivity";
 
-    private void pause(long millis) {
+    protected static Gpio red;
+
+    protected static Gpio green;
+
+    protected static Gpio blue;
+
+    protected static Bmx280 sensor;
+
+    protected static AlphanumericDisplay segment;
+
+    protected static Apa102 strip;
+
+    protected static Speaker buzzer;
+
+    protected void doOpen() throws java.io.IOException {
+
+        red = RainbowHat.openLedRed();
+
+        green = RainbowHat.openLedGreen();
+
+        blue = RainbowHat.openLedBlue();
+
+        sensor = RainbowHat.openSensor();
+
+        segment = RainbowHat.openDisplay();
+
+        strip = RainbowHat.openLedStrip();
+
+        buzzer = RainbowHat.openPiezo();
+
+    }
+
+    protected void doStart() throws java.io.IOException {
+
+        blue.setValue(false);
+        green.setValue(false);
+        red.setValue(false);
+
+        sensor.setTemperatureOversampling(Bmx280.OVERSAMPLING_1X);
+        sensor.setPressureOversampling(Bmx280.OVERSAMPLING_1X);
+
+        segment.setBrightness(Ht16k33.HT16K33_BRIGHTNESS_MAX);
+        segment.setEnabled(true);
+
+        strip.setBrightness(Apa102.MAX_BRIGHTNESS);
+
+    }
+
+    protected void doStop() throws java.io.IOException {
+
+        buzzer.stop();
+
+        int[] rainbow = new int[RainbowHat.LEDSTRIP_LENGTH];
+        strip.setBrightness(0);
+        for (int i = 0; i < rainbow.length; i++) {
+            rainbow[i] = Color.HSVToColor(0xff, new float[] { 0.0f, 1.0f, 1.0f });
+        }
+        strip.write(rainbow);
+        for (int i = 0; i < rainbow.length; i++) {
+            rainbow[i] = ~0;
+        }
+        strip.write(rainbow);
+
+        segment.setEnabled(false);
+
+        blue.setValue(false);
+        green.setValue(false);
+        red.setValue(false);
+
+    }
+
+    protected void doClose() throws java.io.IOException {
+
+        buzzer.close();
+
+        strip.close();
+
+        segment.close();
+
+        sensor.close();
+
+        blue.close();
+        green.close();
+        red.close();
+
+    }
+
+    protected void pause(long millis) {
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {
@@ -54,50 +142,21 @@ public class HomeActivity extends Activity {
 
         try {
 
-            // Open.
+            doOpen();
 
-            Gpio red = RainbowHat.openLedRed();
-
-            Gpio green = RainbowHat.openLedGreen();
-
-            Gpio blue = RainbowHat.openLedBlue();
-
-            Bmx280 sensor = RainbowHat.openSensor();
-
-            AlphanumericDisplay segment = RainbowHat.openDisplay();
-
-            Apa102 strip = RainbowHat.openLedStrip();
-
-            Speaker buzzer = RainbowHat.openPiezo();
-
-            // Initialize.
-
-            sensor.setTemperatureOversampling(Bmx280.OVERSAMPLING_1X);
-            sensor.setPressureOversampling(Bmx280.OVERSAMPLING_1X);
-
-            segment.setBrightness(Ht16k33.HT16K33_BRIGHTNESS_MAX);
-            segment.setEnabled(true);
-
-            // Apply.
+            doStart();
 
             red.setValue(true);
-
-            green.setValue(true);
-
-            blue.setValue(true);
 
             float[] readings = sensor.readTemperatureAndPressure();
             float centigrade = readings[0];
             float fahrenheit = (centigrade * 9.0f / 5.0f) + 32.0f;
             float hectopascals = readings[1];
             float inches = hectopascals * 0.02953f;
-
             Log.i(TAG, centigrade + "C " + fahrenheit + "F " + hectopascals + "hPa " + inches + "in");
-
             segment.display(fahrenheit);
 
             int[] rainbow = new int[RainbowHat.LEDSTRIP_LENGTH];
-            strip.setBrightness(Apa102.MAX_BRIGHTNESS);
             for (int ii = 0; ii < rainbow.length; ii++) {
                 rainbow[ii] = Color.HSVToColor(0xff, new float[] { ii * 360.0f / rainbow.length, 1.0f, 1.0f });
             }
@@ -148,6 +207,18 @@ public class HomeActivity extends Activity {
 
             pause(1000);
 
+            red.setValue(false);
+            green.setValue(true);
+
+            for (int ii = 0; ii < rainbow.length; ii++) {
+                rainbow[ii] = Color.HSVToColor(0xff, new float[] { ii * 360.0f / rainbow.length, 1.0f, 1.0f });
+            }
+            strip.write(rainbow);
+            for (int i = 0; i < rainbow.length; i++) {
+                rainbow[i] = ~0;
+            }
+            strip.write(rainbow);
+
             for (float frequency = 20.0f; frequency <= 20000.0f; frequency *= 1.1f) {
                 Log.i(TAG, frequency + "Hz");
                 buzzer.play(frequency);
@@ -156,6 +227,18 @@ public class HomeActivity extends Activity {
             buzzer.stop();
 
             pause(1000);
+
+            green.setValue(false);
+            blue.setValue(true);
+
+            for (int ii = 0; ii < rainbow.length; ii++) {
+                rainbow[ii] = Color.HSVToColor(0xff, new float[] { ii * 360.0f / rainbow.length, 1.0f, 1.0f });
+            }
+            strip.write(rainbow);
+            for (int i = 0; i < rainbow.length; i++) {
+                rainbow[i] = ~0;
+            }
+            strip.write(rainbow);
 
             buzzer.play(294);
             pause(1000);
@@ -169,43 +252,9 @@ public class HomeActivity extends Activity {
             pause(1000);
             buzzer.stop();
 
-            // Shutdown.
+            doStop();
 
-            buzzer.stop();
-
-            strip.setBrightness(0);
-            for (int i = 0; i < rainbow.length; i++) {
-                rainbow[i] = Color.HSVToColor(0xff, new float[] { 0.0f, 1.0f, 1.0f });
-            }
-            strip.write(rainbow);
-            for (int i = 0; i < rainbow.length; i++) {
-                rainbow[i] = ~0;
-            }
-            strip.write(rainbow);
-
-            segment.setEnabled(false);
-
-            blue.setValue(false);
-
-            green.setValue(false);
-
-            red.setValue(false);
-
-            // Close.
-
-            buzzer.close();
-
-            strip.close();
-
-            segment.close();
-
-            sensor.close();
-
-            blue.close();
-
-            green.close();
-
-            red.close();
+            doClose();
 
         } catch (IOException e) {
             Log.e(TAG, "Failed! " + e);
