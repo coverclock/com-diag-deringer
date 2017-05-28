@@ -146,11 +146,28 @@ public class HomeActivity extends Activity {
             pause(250);
             buzzer.stop();
 
+            pause(1000);
+
             for (float frequency = 20.0f; frequency <= 20000.0f; frequency *= 1.1f) {
                 Log.i(TAG, frequency + "Hz");
                 buzzer.play(frequency);
                 pause(100);
             }
+            buzzer.stop();
+
+            pause(1000);
+
+            buzzer.play(294);
+            pause(1000);
+            buzzer.play(330);
+            pause(1000);
+            buzzer.play(262);
+            pause(1000);
+            buzzer.play(131);
+            pause(1000);
+            buzzer.play(196);
+            pause(1000);
+            buzzer.stop();
 
             // Shutdown.
 
