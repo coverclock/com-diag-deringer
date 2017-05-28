@@ -40,6 +40,14 @@ import android.graphics.Color;
 public class HomeActivity extends Activity {
     private static final String TAG = "HomeActivity";
 
+    private void pause(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+                    /* Do nothing. */
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,14 +107,49 @@ public class HomeActivity extends Activity {
             }
             strip.write(rainbow);
 
+            buzzer.play(460);
+            pause(150);
+            buzzer.stop();
+            buzzer.play(500);
+            pause(250);
+            buzzer.stop();
+            for (int ii = 0; ii < 2; ++ii) {
+                buzzer.play(500);
+                pause(150);
+                buzzer.stop();
+            }
+            buzzer.play(550);
+            pause(250);
+            buzzer.stop();
+            for (int ii = 0; ii < 2; ++ii) {
+                buzzer.play(550);
+                pause(150);
+                buzzer.stop();
+            }
+            buzzer.play(610);
+            pause(250);
+            buzzer.stop();
+            for (int ii = 0; ii < 2; ++ii) {
+                buzzer.play(610);
+                pause(150);
+                buzzer.stop();
+            }
+            buzzer.play(470);
+            pause(250);
+            buzzer.stop();
+            for (int ii = 0; ii < 2; ++ii) {
+                buzzer.play(470);
+                pause(150);
+                buzzer.stop();
+            }
+            buzzer.play(500);
+            pause(250);
+            buzzer.stop();
+
             for (float frequency = 20.0f; frequency <= 20000.0f; frequency *= 1.1f) {
                 Log.i(TAG, frequency + "Hz");
                 buzzer.play(frequency);
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    /* Do nothing. */
-                }
+                pause(100);
             }
 
             // Shutdown.
