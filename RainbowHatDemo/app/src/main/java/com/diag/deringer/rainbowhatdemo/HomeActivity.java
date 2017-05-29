@@ -132,8 +132,18 @@ public class HomeActivity extends Activity {
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {
-                    /* Do nothing. */
+            /* Do nothing. */
         }
+    }
+
+    
+
+    protected void strip_flush() throws java.io.IOException {
+        int[] rainbow = new int[RainbowHat.LEDSTRIP_LENGTH];
+        for (int i = 0; i < rainbow.length; i++) {
+            rainbow[i] = ~0;
+        }
+        strip.write(rainbow);
     }
 
     @Override
@@ -161,10 +171,7 @@ public class HomeActivity extends Activity {
                 rainbow[ii] = Color.HSVToColor(0xff, new float[] { ii * 360.0f / rainbow.length, 1.0f, 1.0f });
             }
             strip.write(rainbow);
-            for (int i = 0; i < rainbow.length; i++) {
-                rainbow[i] = ~0;
-            }
-            strip.write(rainbow);
+            strip_flush();
 
             buzzer.play(460);
             pause(150);
@@ -214,10 +221,7 @@ public class HomeActivity extends Activity {
                 rainbow[ii] = Color.HSVToColor(0xff, new float[] { ii * 360.0f / rainbow.length, 1.0f, 1.0f });
             }
             strip.write(rainbow);
-            for (int i = 0; i < rainbow.length; i++) {
-                rainbow[i] = ~0;
-            }
-            strip.write(rainbow);
+            strip_flush();
 
             for (float frequency = 20.0f; frequency <= 20000.0f; frequency *= 1.1f) {
                 Log.i(TAG, frequency + "Hz");
@@ -235,10 +239,7 @@ public class HomeActivity extends Activity {
                 rainbow[ii] = Color.HSVToColor(0xff, new float[] { ii * 360.0f / rainbow.length, 1.0f, 1.0f });
             }
             strip.write(rainbow);
-            for (int i = 0; i < rainbow.length; i++) {
-                rainbow[i] = ~0;
-            }
-            strip.write(rainbow);
+            strip_flush();
 
             buzzer.play(294);
             pause(1000);
@@ -251,6 +252,42 @@ public class HomeActivity extends Activity {
             buzzer.play(196);
             pause(1000);
             buzzer.stop();
+
+            segment.display("-");
+            pause(100);
+            segment.display("\\");
+            pause(100);
+            segment.display("|");
+            pause(100);
+            segment.display("/");
+            pause(100);
+
+            segment.display(" -");
+            pause(100);
+            segment.display(" \\");
+            pause(100);
+            segment.display(" |");
+            pause(100);
+            segment.display(" /");
+            pause(100);
+
+            segment.display("  -");
+            pause(100);
+            segment.display("  \\");
+            pause(100);
+            segment.display("  |");
+            pause(100);
+            segment.display("  /");
+            pause(100);
+
+            segment.display("   -");
+            pause(100);
+            segment.display("   \\");
+            pause(100);
+            segment.display("   |");
+            pause(100);
+            segment.display("   /");
+            pause(100);
 
             doStop();
 
