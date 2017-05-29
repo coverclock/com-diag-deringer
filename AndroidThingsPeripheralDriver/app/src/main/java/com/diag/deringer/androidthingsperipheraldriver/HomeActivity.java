@@ -1,5 +1,7 @@
 package com.diag.deringer.androidthingsperipheraldriver;
 
+// Copyright 2017 by the Digital Aggregates Corporation, Arvada Colorado USA.
+// Licensed under the terms of the Apache License version 2.0.
 // https://codelabs.developers.google.com/codelabs/androidthings-peripherals/#0
 // mailto:coverclock@diag.com
 // https://github.com/coverclock/com-diag-deringer
@@ -14,25 +16,7 @@ import com.google.android.things.pio.Gpio;
 import android.view.KeyEvent;
 import android.util.Log;
 
-/**
- * Skeleton of an Android Things activity.
- * <p>
- * Android Things peripheral APIs are accessible through the class
- * PeripheralManagerService. For example, the snippet below will open a GPIO pin and
- * set it to HIGH:
- * <p>
- * <pre>{@code
- * PeripheralManagerService service = new PeripheralManagerService();
- * mLedGpio = service.openGpio("BCM6");
- * mLedGpio.setDirection(Gpio.DIRECTION_OUT_INITIALLY_LOW);
- * mLedGpio.setValue(true);
- * }</pre>
- * <p>
- * For more complex peripherals, look for an existing user-space driver, or implement one if none
- * is available.
- *
- * @see <a href="https://github.com/androidthings/contrib-drivers#readme">https://github.com/androidthings/contrib-drivers#readme</a>
- */
+
 public class HomeActivity extends Activity {
     private static final String TAG = "HomeActivity";
     private static final String BUTTON_A = "BCM21";

@@ -1,5 +1,7 @@
 package com.diag.deringer.rainbowhatdemo;
 
+// Copyright 2017 by the Digital Aggregates Corporation, Arvada Colorado USA.
+// Licensed under the terms of the Apache License version 2.0.
 // https://github.com/androidthings/contrib-drivers/tree/master/rainbowhat
 // mailto:coverclock@diag.com
 // https://github.com/coverclock/com-diag-deringer
@@ -136,7 +138,7 @@ public class HomeActivity extends Activity {
         }
     }
 
-    
+
 
     protected void strip_flush() throws java.io.IOException {
         int[] rainbow = new int[RainbowHat.LEDSTRIP_LENGTH];
