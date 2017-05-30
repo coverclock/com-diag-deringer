@@ -37,6 +37,10 @@ public class MainActivity extends Activity {
 
         private Boolean running = new Boolean(false);
 
+        public Lifecycle() {
+            Log.i(getClass().getSimpleName(), "constructor");
+        }
+
         public void lifecycleOpen() throws java.io.IOException {
             Log.i(getClass().getSimpleName(), "open");
         }
@@ -196,7 +200,7 @@ public class MainActivity extends Activity {
                     float fahrenheit = (centigrade * 9.0f / 5.0f) + 32.0f;
                     float hectopascals = readings[1];
                     float inches = hectopascals * 0.02953f;
-                    Log.i(TAG, centigrade + "C " + fahrenheit + "F " + hectopascals + "hPa " + inches + "in");
+                    Log.i(getClass().getSimpleName(), centigrade + "C " + fahrenheit + "F " + hectopascals + "hPa " + inches + "in");
                     pause(1000);
                 } catch (IOException e) {
                     // Do nothing.
@@ -414,10 +418,10 @@ public class MainActivity extends Activity {
             }
         }
 
-        private void range() {
+        private void tinnitus() {
             try {
                 for (float frequency = 20.0f; frequency <= 20000.0f; frequency *= 1.1f) {
-                    Log.i(TAG, frequency + "Hz");
+                    Log.i(getClass().getSimpleName(), frequency + "Hz");
                     buzzer.play(frequency);
                     pause(100);
                 }
@@ -441,7 +445,7 @@ public class MainActivity extends Activity {
                     break;
                 }
                 pause(1000);
-                range();
+                tinnitus();
                 if (lifecycleDone()) {
                     break;
                 }
