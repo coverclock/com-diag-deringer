@@ -456,65 +456,43 @@ public class MainActivity extends Activity {
 
     }
 
-    protected Leds leds = new Leds();
-
-    protected Sensor sensor = new Sensor();
-
-    protected Segment segment = new Segment();
-
-    protected Strip strip = new Strip();
-
-    protected Buzzer buzzer = new Buzzer();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Lifecycle[] lifecycles = new Lifecycle[] { new Leds(), new Sensor(), new Segment(), new Strip(), new Buzzer() };
+
         try {
 
-            leds.lifecycleOpen();
-            sensor.lifecycleOpen();
-            segment.lifecycleOpen();
-            strip.lifecycleOpen();
-            buzzer.lifecycleOpen();
+            for (int ii = 0; ii < lifecycles.length; ++ii) {
+                lifecycles[ii].lifecycleOpen();
+            }
 
-            leds.lifecycleEnable();
-            sensor.lifecycleEnable();
-            segment.lifecycleEnable();
-            strip.lifecycleEnable();
-            buzzer.lifecycleEnable();
+            for (int ii = 0; ii < lifecycles.length; ++ii) {
+                lifecycles[ii].lifecycleEnable();
+            }
 
-            leds.lifecycleStart();
-            sensor.lifecycleStart();
-            segment.lifecycleStart();
-            strip.lifecycleStart();
-            buzzer.lifecycleStart();
+            for (int ii = 0; ii < lifecycles.length; ++ii) {
+                lifecycles[ii].lifecycleStart();
+            }
 
             pause(30000);
 
-            buzzer.lifecycleStop();
-            strip.lifecycleStop();
-            segment.lifecycleStop();
-            sensor.lifecycleStop();
-            leds.lifecycleStop();
+            for (int ii = 0; ii < lifecycles.length; ++ii) {
+                lifecycles[ii].lifecycleStop();
+            }
 
-            buzzer.lifecycleWait();
-            strip.lifecycleWait();
-            segment.lifecycleWait();
-            sensor.lifecycleWait();
-            leds.lifecycleWait();
+            for (int ii = 0; ii < lifecycles.length; ++ii) {
+                lifecycles[ii].lifecycleWait();
+            }
 
-            buzzer.lifecycleDisable();
-            strip.lifecycleDisable();
-            segment.lifecycleDisable();
-            sensor.lifecycleDisable();
-            leds.lifecycleDisable();
+            for (int ii = 0; ii < lifecycles.length; ++ii) {
+                lifecycles[ii].lifecycleDisable();
+            }
 
-            buzzer.lifecycleClose();
-            strip.lifecycleClose();
-            segment.lifecycleClose();
-            sensor.lifecycleClose();
-            leds.lifecycleClose();
+            for (int ii = 0; ii < lifecycles.length; ++ii) {
+                lifecycles[ii].lifecycleClose();
+            }
 
         } catch (IOException e) {
             Log.e(TAG, "Failed! " + e);

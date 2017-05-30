@@ -52,5 +52,6 @@ NOTES
     adb uninstall com.diag.deringer.androidthingsperipheralio
     adb uninstall com.diag.deringer.androidthingsperipheraldriver
     adb uninstall com.diag.deringer.rainbowhatdemo
+    adb uninstall com.diag.deringer.rainbowhatthing
     adb uninstall com.example.androidthings.simpleui
 
