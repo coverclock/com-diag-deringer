@@ -27,7 +27,13 @@ public class MainActivity extends Activity {
 
     public void pause(long millis) {
         try {
-            Thread.sleep(millis);
+            if (millis > 0) {
+                Thread.sleep(millis);
+            } else if (millis == 0) {
+                Thread.yield();
+            } else {
+                // Do nothing.
+            }
         } catch (InterruptedException e) {
             /* Do nothing. */
         }
@@ -479,6 +485,7 @@ public class MainActivity extends Activity {
                     }
                 } while (false);
                 v();
+                pause(0);
             }
             Log.i(getClass().getSimpleName(), "end");
         }
