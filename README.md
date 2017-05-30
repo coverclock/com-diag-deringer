@@ -19,24 +19,36 @@ CONTACT
 
 ABSTRACT
 
-These are musings with Android Things (the platform formerly known
-as "brillo") on the Raspberry Pi 3. So far I have written four toy
-applications that run under Android Things using Android Studio. You
-can find all of them in this repository, the project for which is
-code-named "Deringer".
+These are musings with Android Things (the platform formerly known as
+"brillo") on the Raspberry Pi 3.
 
-AndroidThingsPeripheralIO is my implementation of the first exercise in
+Android Things provides low level drivers for common embedded interfaces
+like the Serial Peripheral Interface (SPI) bus, the Inter-Integrated
+Circuit (I2C) bus, Pulse Width Modulation (PWM), and General Purpose
+Input/Output (GPIO). Third party software drivers are available for
+peripherals that connect to the Raspberry Pi using these hardware
+interfaces.
+
+* The Apa102 LED strip driver uses SPI.
+* The Bmx280 temperature and pressure sensor driver uses I2C.
+* The Ht16k33 alphanumeric segment driver uses I2C.
+* The Piezoelectric buzzer driver uses PWM.
+* The button driver uses GPIO.
+The LED driver uses GPIO.
+
+So far I have written four toy applications that run under Android
+Things using Android Studio. You can find all of them in this repository,
+the project for which is code-named "Deringer".
+
+* AndroidThingsPeripheralIO is my implementation of the first exercise in
 the Google Codelabs tutorial for Android Things peripherals. It uses the
 buttons and the LEDs.
-
-AndroidThingsPeripheralDriver is my implementation of the second exercise
+* AndroidThingsPeripheralDriver is my implementation of the second exercise
 (a minor variation on the first) in the Google Codelabs tutorial for
 Android Things peripherals. It uses the buttons and the LEDs.
-
-RainbowHatDemo is a single-threaded demo of the peripherals (except for
+* RainbowHatDemo is a single-threaded demo of the peripherals (except for
 the buttons) on the Pimoroni Rainbow Hat for the Raspberry Pi 3.
-
-RainbowHatThing is a multi-threaded demo of the peripherals (except for
+* RainbowHatThing is a multi-threaded demo of the peripherals (except for
 the buttons) on the Pimoroni Rainbow Hat for the Raspberry Pi 3.
 
 IMAGES AND VIDEOS
@@ -56,6 +68,10 @@ REPOSITORIES
 <https://github.com/androidthings/sample-simpleui>
 
 RESOURCES
+
+<https://developer.android.com/things/index.html>
+
+<https://developer.android.com/things/sdk/index.html>
 
 <https://codelabs.developers.google.com/codelabs/androidthings-peripherals/#0>
 
