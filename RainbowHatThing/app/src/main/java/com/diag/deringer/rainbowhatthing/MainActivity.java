@@ -1,5 +1,7 @@
 package com.diag.deringer.rainbowhatthing;
 
+// Copyright 2017 by the Digital Aggregates Corporation, Arvada Colorado USA.
+// Licensed under the terms of the Apache License version 2.0.
 // https://github.com/androidthings/contrib-drivers/tree/master/rainbowhat
 // mailto:coverclock@diag.com
 // https://github.com/coverclock/com-diag-deringer
@@ -33,38 +35,50 @@ public class MainActivity extends Activity {
 
     protected class Lifecycle extends Thread {
 
-        private Boolean state = new Boolean(false);
+        private Boolean running = new Boolean(false);
 
         public void lifecycleOpen() throws java.io.IOException {
+            Log.i(getClass().getSimpleName(), "open");
         }
 
         public void lifecycleClose() throws java.io.IOException {
+            Log.i(getClass().getSimpleName(), "close");
         }
 
         public void lifecycleEnable() throws java.io.IOException {
+            Log.i(getClass().getSimpleName(), "enable");
         }
 
         public void lifecycleDisable() throws java.io.IOException {
+            Log.i(getClass().getSimpleName(), "disable");
         }
 
         public void lifecycleStart() {
-            synchronized (state) {
-                if (!state) {
-                    state = true;
+            Log.i(getClass().getSimpleName(), "start");
+            synchronized (running) {
+                if (!running) {
+                    running = true;
                     start();
                 }
             }
         }
 
         public void lifecycleStop() {
-            synchronized (state) {
-                state = false;
+            Log.i(getClass().getSimpleName(), "stop");
+            synchronized (running) {
+                running = false;
+                interrupt();
             }
         }
 
         public void lifecycleWait() {
+            Log.i(getClass().getSimpleName(), "wait");
             boolean done;
 
+            synchronized (running) {
+                running = false;
+                interrupt();
+            }
             do {
                 try {
                     join();
@@ -78,8 +92,12 @@ public class MainActivity extends Activity {
         public boolean lifecycleDone() {
             boolean done;
 
-            synchronized (state) {
-                done = state;
+            synchronized (running) {
+                done = !running;
+            }
+
+            if (done) {
+                Log.i(getClass().getSimpleName(), "done");
             }
 
             return done;
@@ -95,6 +113,7 @@ public class MainActivity extends Activity {
 
         @Override
         public void lifecycleOpen() throws java.io.IOException {
+            super.lifecycleOpen();
             red = RainbowHat.openLedRed();
             green = RainbowHat.openLedGreen();
             blue = RainbowHat.openLedBlue();
@@ -102,6 +121,7 @@ public class MainActivity extends Activity {
 
         @Override
         public void lifecycleClose() throws java.io.IOException {
+            super.lifecycleClose();
             blue.close();
             green.close();
             red.close();
@@ -109,6 +129,7 @@ public class MainActivity extends Activity {
 
         @Override
         public void lifecycleEnable() throws java.io.IOException {
+            super.lifecycleEnable();
             red.setValue(false);
             green.setValue(false);
             blue.setValue(false);
@@ -116,6 +137,7 @@ public class MainActivity extends Activity {
 
         @Override
         public void lifecycleDisable() throws java.io.IOException {
+            super.lifecycleDisable();
             blue.setValue(false);
             green.setValue(false);
             red.setValue(false);
@@ -123,6 +145,7 @@ public class MainActivity extends Activity {
 
         @Override
         public void run() {
+            Log.i(getClass().getSimpleName(), "begin");
             while (!lifecycleDone()) {
                 for (int ii = 0; ii < 8; ++ii) {
                     try {
@@ -135,6 +158,7 @@ public class MainActivity extends Activity {
                     pause(100);
                 }
             }
+            Log.i(getClass().getSimpleName(), "end");
         }
 
     }
@@ -145,22 +169,26 @@ public class MainActivity extends Activity {
 
         @Override
         public void lifecycleOpen() throws java.io.IOException {
+            super.lifecycleOpen();
             sensor = RainbowHat.openSensor();
         }
 
         @Override
         public void lifecycleClose() throws java.io.IOException {
+            super.lifecycleClose();
             sensor.close();
         }
 
         @Override
         public void lifecycleEnable() throws java.io.IOException {
+            super.lifecycleEnable();
             sensor.setTemperatureOversampling(Bmx280.OVERSAMPLING_1X);
             sensor.setPressureOversampling(Bmx280.OVERSAMPLING_1X);
         }
 
         @Override
         public void run() {
+            Log.i(getClass().getSimpleName(), "begin");
             while (!lifecycleDone()) {
                 try {
                     float[] readings = sensor.readTemperatureAndPressure();
@@ -174,6 +202,7 @@ public class MainActivity extends Activity {
                     // Do nothing.
                 }
             }
+            Log.i(getClass().getSimpleName(), "end");
         }
 
     }
@@ -182,7 +211,7 @@ public class MainActivity extends Activity {
 
         protected AlphanumericDisplay segment;
 
-        private String[] string = new String[] {
+        private String[] spinner = new String[] {
                 "-",    "\\",    "|",    "/",
                 " -",   " \\",   " |",   " /",
                 "  -",  "  \\",  "  |",  "  /",
@@ -191,37 +220,43 @@ public class MainActivity extends Activity {
 
         @Override
         public void lifecycleOpen() throws java.io.IOException {
+            super.lifecycleOpen();
             segment = RainbowHat.openDisplay();
         }
 
         @Override
         public void lifecycleClose() throws java.io.IOException {
+            super.lifecycleClose();
             segment.close();
         }
 
         @Override
         public void lifecycleEnable() throws java.io.IOException {
+            super.lifecycleEnable();
             segment.setBrightness(Ht16k33.HT16K33_BRIGHTNESS_MAX);
             segment.setEnabled(true);
         }
 
         @Override
         public void lifecycleDisable() throws java.io.IOException {
+            super.lifecycleDisable();
             segment.setEnabled(false);
         }
 
         @Override
         public void run() {
+            Log.i(getClass().getSimpleName(), "begin");
             while (!lifecycleDone()) {
                 try {
-                    for (int ii = 0; ii < string.length; ++ii) {
-                        segment.display(string[ii]);
+                    for (int ii = 0; ii < spinner.length; ++ii) {
+                        segment.display(spinner[ii]);
                         pause(100);
                     }
                 } catch (IOException e) {
                     // Do nothing.
                 }
             }
+            Log.i(getClass().getSimpleName(), "end");
         }
 
     }
@@ -241,21 +276,25 @@ public class MainActivity extends Activity {
 
         @Override
         public void lifecycleOpen() throws java.io.IOException {
+            super.lifecycleOpen();
             strip = RainbowHat.openLedStrip();
         }
 
         @Override
         public void lifecycleClose() throws java.io.IOException {
+            super.lifecycleClose();
             strip.close();
         }
 
         @Override
         public void lifecycleEnable() throws java.io.IOException {
+            super.lifecycleEnable();
             strip.setBrightness(Apa102.MAX_BRIGHTNESS);
         }
 
         @Override
         public void lifecycleDisable() throws java.io.IOException {
+            super.lifecycleDisable();
             strip.setBrightness(0);
             for (int i = 0; i < rainbow.length; i++) {
                 rainbow[i] = Color.HSVToColor(0xff, new float[] { 0.0f, 1.0f, 1.0f });
@@ -266,6 +305,7 @@ public class MainActivity extends Activity {
 
         @Override
         public void run() {
+            Log.i(getClass().getSimpleName(), "begin");
             while (!lifecycleDone()) {
                 try {
                     for (int ii = 0; ii < rainbow.length; ii++) {
@@ -284,6 +324,7 @@ public class MainActivity extends Activity {
                     // Do nothing.
                 }
             }
+            Log.i(getClass().getSimpleName(), "end");
         }
 
     }
@@ -294,16 +335,19 @@ public class MainActivity extends Activity {
 
         @Override
         public void lifecycleOpen() throws java.io.IOException {
+            super.lifecycleOpen();
             buzzer = RainbowHat.openPiezo();
         }
 
         @Override
         public void lifecycleClose() throws java.io.IOException {
+            super.lifecycleClose();
             buzzer.close();
         }
 
         @Override
         public void lifecycleDisable() throws java.io.IOException {
+            super.lifecycleDisable();
             buzzer.stop();
         }
 
@@ -385,24 +429,25 @@ public class MainActivity extends Activity {
 
         @Override
         public void run() {
+            Log.i(getClass().getSimpleName(), "begin");
             while (true) {
                 hotline();
                 if (lifecycleDone()) {
-                    return;
+                    break;
                 }
                 pause(1000);
                 welcome();
                 if (lifecycleDone()) {
-                    return;
+                    break;
                 }
                 pause(1000);
                 range();
                 if (lifecycleDone()) {
-                    return;
+                    break;
                 }
                 pause(1000);
             }
-
+            Log.i(getClass().getSimpleName(), "end");
         }
 
     }
@@ -441,7 +486,7 @@ public class MainActivity extends Activity {
             strip.lifecycleStart();
             buzzer.lifecycleStart();
 
-            pause(10000);
+            pause(30000);
 
             buzzer.lifecycleStop();
             strip.lifecycleStop();
