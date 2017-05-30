@@ -35,7 +35,7 @@ public class MainActivity extends Activity {
 
     protected class Lifecycle extends Thread {
 
-        private Boolean running = new Boolean(false);
+        private boolean running = false;
 
         public Lifecycle() {
             Log.i(getClass().getSimpleName(), "constructor");
@@ -59,7 +59,7 @@ public class MainActivity extends Activity {
 
         public void lifecycleStart() {
             Log.i(getClass().getSimpleName(), "start");
-            synchronized (running) {
+            synchronized (this) {
                 if (!running) {
                     running = true;
                     start();
@@ -69,7 +69,7 @@ public class MainActivity extends Activity {
 
         public void lifecycleStop() {
             Log.i(getClass().getSimpleName(), "stop");
-            synchronized (running) {
+            synchronized (this) {
                 running = false;
                 interrupt();
             }
@@ -79,7 +79,7 @@ public class MainActivity extends Activity {
             Log.i(getClass().getSimpleName(), "wait");
             boolean done;
 
-            synchronized (running) {
+            synchronized (this) {
                 running = false;
                 interrupt();
             }
@@ -96,7 +96,7 @@ public class MainActivity extends Activity {
         public boolean lifecycleDone() {
             boolean done;
 
-            synchronized (running) {
+            synchronized (this) {
                 done = !running;
             }
 
@@ -333,26 +333,38 @@ public class MainActivity extends Activity {
 
     }
 
+    public enum Noise { NONE, HOTLINE, WELCOME, TINNITUS }
+
+    private static final Object noises = new Object();
+    private static boolean noisy = false;
+
+    public void p() {
+        synchronized (noises) {
+            while (noisy) {
+                try {
+                    noises.wait();
+                } catch (InterruptedException e) {
+                    // Do nothing.
+                }
+            }
+            noisy = true;
+        }
+    }
+
+    public void v() {
+        synchronized (noises) {
+            noisy = false;
+            noises.notifyAll();
+        }
+    }
+
     protected class Buzzer extends Lifecycle {
 
-        protected  Speaker buzzer;
+        protected Speaker buzzer;
+        protected Noise noise = Noise.NONE;
 
-        @Override
-        public void lifecycleOpen() throws java.io.IOException {
-            super.lifecycleOpen();
-            buzzer = RainbowHat.openPiezo();
-        }
-
-        @Override
-        public void lifecycleClose() throws java.io.IOException {
-            super.lifecycleClose();
-            buzzer.close();
-        }
-
-        @Override
-        public void lifecycleDisable() throws java.io.IOException {
-            super.lifecycleDisable();
-            buzzer.stop();
+        public Buzzer(Noise nn) {
+            noise = nn;
         }
 
         private void hotline() {
@@ -395,6 +407,7 @@ public class MainActivity extends Activity {
                 buzzer.play(500);
                 pause(250);
                 buzzer.stop();
+                pause(500);
             } catch (IOException e) {
                 // Do nothing.
             }
@@ -413,6 +426,7 @@ public class MainActivity extends Activity {
                 buzzer.play(196);
                 pause(1000);
                 buzzer.stop();
+                pause(500);
             } catch (IOException e) {
                 // Do nothing.
             }
@@ -426,30 +440,45 @@ public class MainActivity extends Activity {
                     pause(100);
                 }
                 buzzer.stop();
+                pause(500);
             } catch (IOException e) {
-                // Do nothing. */
+                // Do nothing.
             }
         }
 
         @Override
         public void run() {
             Log.i(getClass().getSimpleName(), "begin");
-            while (true) {
-                hotline();
-                if (lifecycleDone()) {
-                    break;
-                }
-                pause(1000);
-                welcome();
-                if (lifecycleDone()) {
-                    break;
-                }
-                pause(1000);
-                tinnitus();
-                if (lifecycleDone()) {
-                    break;
-                }
-                pause(1000);
+            while (!lifecycleDone()) {
+                p();
+                do {
+                    if (lifecycleDone()) {
+                        break;
+                    }
+                    try {
+                        buzzer = RainbowHat.openPiezo();
+                        switch (noise) {
+                            case HOTLINE:
+                                hotline();
+                                break;
+                            case WELCOME:
+                                welcome();
+                                break;
+                            case TINNITUS:
+                                tinnitus();
+                                break;
+                            default:
+                                break;
+                        }
+                        buzzer.close();
+                    } catch (IOException e) {
+                        // Do nothing.
+                    }
+                    if (lifecycleDone()) {
+                        break;
+                    }
+                } while (false);
+                v();
             }
             Log.i(getClass().getSimpleName(), "end");
         }
@@ -460,7 +489,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Lifecycle[] lifecycles = new Lifecycle[] { new Leds(), new Sensor(), new Segment(), new Strip(), new Buzzer() };
+        Lifecycle[] lifecycles = new Lifecycle[] { new Leds(), new Sensor(), new Segment(), new Strip(), new Buzzer(Noise.HOTLINE), new Buzzer(Noise.WELCOME), new Buzzer(Noise.TINNITUS) };
 
         try {
 
