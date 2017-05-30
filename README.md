@@ -19,7 +19,31 @@ CONTACT
 
 ABSTRACT
 
-These are musings with Android Things on the Raspberry Pi 3.
+These are musings with Android Things (the platform formerly known
+as "brillo") on the Raspberry Pi 3. So far I have written four toy
+applications that run under Android Things using Android Studio. You
+can find all of them in this repository, the project for which is
+code-named "Deringer".
+
+AndroidThingsPeripheralIO is my implementation of the first exercise in
+the Google Codelabs tutorial for Android Things peripherals. It uses the
+buttons and the LEDs.
+
+AndroidThingsPeripheralDriver is my implementation of the second exercise
+(a minor variation on the first) in the Google Codelabs tutorial for
+Android Things peripherals. It uses the buttons and the LEDs.
+
+RainbowHatDemo is a single-threaded demo of the peripherals (except for
+the buttons) on the Pimoroni Rainbow Hat for the Raspberry Pi 3.
+
+RainbowHatThing is a multi-threaded demo of the peripherals (except for
+the buttons) on the Pimoroni Rainbow Hat for the Raspberry Pi 3.
+
+IMAGES AND VIDEOS
+
+<https://www.flickr.com/photos/johnlsloan/albums/72157681393247802>
+
+<https://www.youtube.com/watch?v=DHEZW0UPd2M>
 
 REPOSITORIES
 
