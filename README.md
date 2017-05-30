@@ -1,14 +1,14 @@
 # com-diag-deringer
 
-COPYRIGHT
+## Copyright
 
 Copyright 2017 by the  Digital Aggregates Corporation, Arvada Colorado USA.
 
-LICENSE
+## License
 
 Licensed under the terms of the Apache license v2.0.
 
-CONTACT
+## Contact
 
     Chip Overclock
     Digital Aggregates Corporation
@@ -17,7 +17,7 @@ CONTACT
     http://www.diag.com
     mailto:coverclock@diag.com
 
-ABSTRACT
+## Abstract
 
 These are musings with Android Things (the platform formerly known as
 "brillo") on the Raspberry Pi 3.
@@ -51,13 +51,13 @@ the buttons) on the Pimoroni Rainbow Hat for the Raspberry Pi 3.
 * RainbowHatThing is a multi-threaded demo of the peripherals (except for
 the buttons) on the Pimoroni Rainbow Hat for the Raspberry Pi 3.
 
-IMAGES AND VIDEOS
+## Images and Videos
 
 <https://www.flickr.com/photos/johnlsloan/albums/72157681393247802>
 
 <https://www.youtube.com/watch?v=DHEZW0UPd2M>
 
-REPOSITORIES
+## Repositories
 
 <https://github.com/coverclock/com-diag-deringer>
 
@@ -67,7 +67,7 @@ REPOSITORIES
 
 <https://github.com/androidthings/sample-simpleui>
 
-RESOURCES
+## Resources
 
 <https://developer.android.com/things/index.html>
 
@@ -87,7 +87,7 @@ RESOURCES
 
 <https://blog.stylingandroid.com/simple-things-part-4/>
 
-NOTES
+## Notes
 
     adb uninstall com.diag.deringer.androidthingsperipheralio
     adb uninstall com.diag.deringer.androidthingsperipheraldriver
