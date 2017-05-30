@@ -6,7 +6,7 @@ Copyright 2017 by the  Digital Aggregates Corporation, Arvada Colorado USA.
 
 LICENSE
 
-Licensed under the terms of the FSF GPL v2.
+Licensed under the terms of the Apache license v2.0.
 
 CONTACT
 
