@@ -34,7 +34,7 @@ interfaces.
 * The Ht16k33 alphanumeric segment driver uses I2C.
 * The Piezoelectric buzzer driver uses PWM.
 * The button driver uses GPIO.
-The LED driver uses GPIO.
+* The LED driver uses GPIO.
 
 So far I have written four toy applications that run under Android
 Things using Android Studio. You can find all of them in this repository,
